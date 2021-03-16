@@ -1,6 +1,6 @@
 from __future__ import print_function
 import argparse
-from math import log10
+from torch import log10
 
 import torch
 import torch.nn as nn
@@ -65,10 +65,10 @@ def test():
         for batch in testing_data_loader:
             input, target = batch[0].to(device), batch[1].to(device)
 
-            prediction = model(input)
-            mse = criterion(prediction, target)
-            psnr = 10 * log10(1 / mse.item())
-            avg_psnr += psnr
+            prediction = model(input)            
+            mse = torch.mean((img1 - img2) ** 2, dim=(1, 2, 3)) # calculate mse per image            
+            psnr = 10 * log10(1 / mse)
+            avg_psnr += torch.mean(psnr).item() # calculate average mse
     print("===> Avg. PSNR: {:.4f} dB".format(avg_psnr / len(testing_data_loader)))
 
 
